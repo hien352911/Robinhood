@@ -45,5 +45,27 @@ class CardStackLayout: UICollectionViewLayout {
     
     return indexPaths
   }
+    
+    override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
+        
+        attributes.frame = collectionView?.bounds ?? .zero
+        
+        var isNotTop = false
+        if let numItems = collectionView?.numberOfItems(inSection: 0), numItems > 0 {
+            isNotTop = indexPath.row != numItems - 1
+        }
+        attributes.alpha = isNotTop ? 0 : 1
+        
+        return attributes
+    }
+    
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        let indexPaths = indexPathsForElementsInRect(rect)
+        let layoutAttributes = indexPaths.map { layoutAttributesForItem(at: $0) }
+            .filter { $0 != nil }.map { $0! }
+
+        return layoutAttributes
+    }
 }
 
