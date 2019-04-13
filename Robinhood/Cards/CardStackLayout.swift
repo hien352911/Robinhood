@@ -29,9 +29,14 @@
 import UIKit
 
 class CardStackLayout: UICollectionViewLayout {
+    
+    private var panGestureRecognizer = UIPanGestureRecognizer()
   
   override func prepare() {
     super.prepare()
+    
+    panGestureRecognizer.addTarget(self, action: #selector(handlePan(gestureRecognizer:)))
+    collectionView?.addGestureRecognizer(panGestureRecognizer)
   }
   
   fileprivate func indexPathsForElementsInRect(_ rect: CGRect) -> [IndexPath] {
@@ -45,6 +50,10 @@ class CardStackLayout: UICollectionViewLayout {
     
     return indexPaths
   }
+    
+    @objc func handlePan(gestureRecognizer: UIPanGestureRecognizer) {
+        print("panning")
+    }
     
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
