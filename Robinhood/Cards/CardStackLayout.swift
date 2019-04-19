@@ -28,9 +28,40 @@
 
 import UIKit
 
+protocol CardStackLayoutDelegate: class {
+    func cardShouldRemove(_ flowLayout: CardStackLayout, indexPath: IndexPath)
+}
+
 class CardStackLayout: UICollectionViewLayout {
     
     private var panGestureRecognizer = UIPanGestureRecognizer()
+    
+    private let maxOffsetThresholdPercentage: CGFloat = 0.3
+    
+    typealias CellWithIndexpath = (cell: UICollectionViewCell, indexPath: IndexPath)
+    
+    private let animationDuration: TimeInterval = 0.15
+    
+    weak var delegate: CardStackLayoutDelegate?
+    
+    private var topCellWithIndexPath: CellWithIndexpath? {
+        let lastItem = collectionView?.numberOfItems(inSection: 0) ?? 0
+        let indexPath = IndexPath(item: lastItem - 1, section: 0)
+        
+        guard let cell = collectionView?.cellForItem(at: indexPath) else { return nil }
+        
+        return (cell: cell, indexPath: indexPath)
+    }
+    
+    private var bottomCellWithIndexPath: CellWithIndexpath? {
+        guard let numItems = collectionView?.numberOfItems(inSection: 0), numItems > 1 else { return nil }
+        
+        let indexPath = IndexPath(item: numItems - 2, section: 0)
+        
+        guard let cell = collectionView?.cellForItem(at: indexPath) else { return nil }
+        
+        return (cell: cell, indexPath: indexPath)
+    }
   
   override func prepare() {
     super.prepare()
@@ -52,9 +83,47 @@ class CardStackLayout: UICollectionViewLayout {
   }
     
     @objc func handlePan(gestureRecognizer: UIPanGestureRecognizer) {
-        print("panning")
+        let translation = gestureRecognizer.translation(in: collectionView)
+        
+        let xOffset = translation.x
+        let xMaxOffset = (collectionView?.frame.width ?? 0) * maxOffsetThresholdPercentage
+        
+        switch gestureRecognizer.state {
+        case .changed:
+            if let topCard = topCellWithIndexPath {
+                topCard.cell.transform = CGAffineTransform(translationX: xOffset, y: 0)
+            }
+            
+            if let bottomCard = bottomCellWithIndexPath {
+                bottomCard.cell.alpha = 1
+            }
+        case .ended:
+            if abs(xOffset) > xMaxOffset {
+                if let topCard = topCellWithIndexPath {
+                    // Animate and remove
+                    animateAndRemove(left: xOffset < 0, cell: topCard.cell, completion: {
+                        [weak self] in
+                        guard let `self` = self else { return }
+                    })
+                }
+                
+                if let bottomCard = bottomCellWithIndexPath {
+                    // Animate into primary position
+                    animateIntoPosition(cell: bottomCard.cell)
+                }
+            } else {
+                if let topCard = topCellWithIndexPath {
+                    // Animate back into primary position
+                    animateIntoPosition(cell: topCard.cell)
+                }
+            }
+        default:
+            break
+        }
+        
     }
     
+    // Func support for layoutAttributesForElements(in rect: CGRect), chứ ko auto đc gọi
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
         
@@ -69,12 +138,32 @@ class CardStackLayout: UICollectionViewLayout {
         return attributes
     }
     
+    // Key function in collectionViewFlowLayout
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         let indexPaths = indexPathsForElementsInRect(rect)
         let layoutAttributes = indexPaths.map { layoutAttributesForItem(at: $0) }
             .filter { $0 != nil }.map { $0! }
 
         return layoutAttributes
+    }
+    
+    private func animateIntoPosition(cell: UICollectionViewCell) {
+        UIView.animate(withDuration: animationDuration) {
+            // identity: vị trí ban đầu trước khi transform
+            cell.transform = CGAffineTransform.identity
+            cell.alpha = 1
+        }
+    }
+    
+    private func animateAndRemove(left: Bool, cell: UICollectionViewCell, completion: (() -> ())?) {
+        let screenWidth = UIScreen.main.bounds.width
+        
+        UIView.animate(withDuration: animationDuration, animations: {
+            let xTranslateOffscreen = CGAffineTransform(translationX: left ? -screenWidth : screenWidth, y: 0)
+            cell.transform = xTranslateOffscreen
+        }) { (completed) in
+            completion?()
+        }
     }
 }
 
