@@ -40,8 +40,12 @@ class ViewController: UIViewController {
   @IBOutlet weak var topView: UIView!
   @IBOutlet weak var cardCollectionView: UICollectionView!
 
-  private var cardsData = RobinhoodData.data.cards
-  private var graphData = RobinhoodChartData.vooDayData
+    private var cardsData = RobinhoodData.data.cards
+    private var graphData = RobinhoodChartData.portfolioData
+    
+    lazy private var graphView: GraphView = {
+        return GraphView(data: graphData)
+    }()
   
   override func viewDidLoad() {
     
@@ -52,6 +56,17 @@ class ViewController: UIViewController {
     if let layout = cardCollectionView.collectionViewLayout as? CardStackLayout {
         layout.delegate = self
     }
+    
+    graphView.backgroundColor = .white
+    graphView.translatesAutoresizingMaskIntoConstraints = false
+    topView.addSubview(graphView)
+    
+    view.addConstraints([
+        NSLayoutConstraint(item: graphView, attribute: .bottom, relatedBy: .equal, toItem: topView, attribute: .bottom, multiplier: 1.0, constant: 0.0),
+        NSLayoutConstraint(item: graphView, attribute: .leading, relatedBy: .equal, toItem: topView, attribute: .leading, multiplier: 1.0, constant: 0.0),
+        NSLayoutConstraint(item: graphView, attribute: .trailing, relatedBy: .equal, toItem: topView, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+        NSLayoutConstraint(item: graphView, attribute: .height, relatedBy: .equal, toItem: topView, attribute: .height, multiplier: .graphHeightMultiplier, constant: 0.0)
+        ])
   }
 }
 

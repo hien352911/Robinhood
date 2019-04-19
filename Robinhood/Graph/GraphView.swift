@@ -74,8 +74,8 @@ final class GraphView: UIView {
     width = rect.size.width
     step = width/CGFloat(dataPoints.data.count)
     
-//    drawGraph()
-//    drawMiddleLine()
+    drawGraph()
+    drawMiddleLine()
     
     configureLineIndicatorView()
     configureTimeStampLabel()
@@ -86,6 +86,27 @@ final class GraphView: UIView {
   
   private func drawGraph() {
     // draw graph
+    let graphPath = UIBezierPath()
+    graphPath.move(to: CGPoint(x: 0, y: height))
+    
+    for i in stride(from: 0, to: width, by: step) {
+        xCoordinates.append(i)
+    }
+    
+    for (index, dataPoint) in dataPoints.data.enumerated() {
+        let midPoint = dataPoints.openingPrice
+        let graphMiddle = height / 2
+        
+        let y: CGFloat = graphMiddle + CGFloat(midPoint - dataPoint.price) * .scale
+        
+        let newPoint = CGPoint(x: xCoordinates[index], y: y)
+        graphPath.addLine(to: newPoint)
+    }
+    
+    UIColor.upAccentColor.setFill()
+    UIColor.upAccentColor.setStroke()
+    graphPath.lineWidth = .graphLineWidth
+    graphPath.stroke()
   }
   
   private func drawMiddleLine() {
