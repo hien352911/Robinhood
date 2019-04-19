@@ -104,6 +104,7 @@ class CardStackLayout: UICollectionViewLayout {
                     animateAndRemove(left: xOffset < 0, cell: topCard.cell, completion: {
                         [weak self] in
                         guard let `self` = self else { return }
+                        self.delegate?.cardShouldRemove(self, indexPath: topCard.indexPath)
                     })
                 }
                 
