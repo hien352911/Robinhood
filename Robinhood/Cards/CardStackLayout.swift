@@ -95,7 +95,13 @@ class CardStackLayout: UICollectionViewLayout {
             }
             
             if let bottomCard = bottomCellWithIndexPath {
-                bottomCard.cell.alpha = 1
+                let draggingScale = 0.5 + (abs(xOffset) / (collectionView?.frame.width ?? 1) * 0.7)
+                
+                let scale = draggingScale > 1 ? 1 : draggingScale
+                
+                bottomCard.cell.transform = CGAffineTransform(scaleX: scale, y: scale)
+                
+                bottomCard.cell.alpha = scale / 2
             }
         case .ended:
             if abs(xOffset) > xMaxOffset {
