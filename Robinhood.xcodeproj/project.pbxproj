@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0FC38C226A0CE6003E4052 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0FC38B226A0CE6003E4052 /* GraphView.swift */; };
 		B64C914B209F3DF100BB1DEC /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B64C9145209F3DF100BB1DEC /* Roboto-Bold.ttf */; };
 		B64C914C209F3DF100BB1DEC /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B64C9146209F3DF100BB1DEC /* Roboto-Medium.ttf */; };
 		B64C914D209F3DF200BB1DEC /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B64C9147209F3DF100BB1DEC /* Roboto-Thin.ttf */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B0FC38B226A0CE6003E4052 /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		B64C9145209F3DF100BB1DEC /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		B64C9146209F3DF100BB1DEC /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		B64C9147209F3DF100BB1DEC /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Thin.ttf"; sourceTree = "<group>"; };
@@ -59,6 +61,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B0FC38A226A0CE6003E4052 /* Graph */ = {
+			isa = PBXGroup;
+			children = (
+				8B0FC38B226A0CE6003E4052 /* GraphView.swift */,
+			);
+			path = Graph;
+			sourceTree = "<group>";
+		};
 		B64C9144209F3DDA00BB1DEC /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,6 +128,7 @@
 		B6BF645F209F137F000FDF39 /* Robinhood */ = {
 			isa = PBXGroup;
 			children = (
+				8B0FC38A226A0CE6003E4052 /* Graph */,
 				B64C9159209F3E5B00BB1DEC /* Data */,
 				B64C9154209F3E2A00BB1DEC /* Cards */,
 				B64C9151209F3E1400BB1DEC /* Helpers */,
@@ -218,6 +229,7 @@
 				B64C9165209F3E7F00BB1DEC /* CardStackLayout.swift in Sources */,
 				B64C9167209F3E7F00BB1DEC /* RobinhoodCardCell.swift in Sources */,
 				B64C9153209F3E2100BB1DEC /* StyleGuide.swift in Sources */,
+				8B0FC38C226A0CE6003E4052 /* GraphView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
