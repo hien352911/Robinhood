@@ -95,6 +95,16 @@ final class TickerControl: UIViewController {
   
   func showNumber(_ number: Double) {
     numberValue = number
+	
+	for (index, char) in stringValue.enumerated() {
+		let indexPath = IndexPath(row: index, section: 0)
+		
+		guard let cell = columnsCollectionView.cellForItem(at: indexPath) as? TickerColumnCell,
+			let characterIndex = cell.characters.index(of: "\(char)") else { return }
+		
+		let charIndexPath = IndexPath(row: characterIndex, section: 0)
+		cell.tableView.scrollToRow(at: charIndexPath, at: .middle, animated: true)
+	}
   }
 }
 

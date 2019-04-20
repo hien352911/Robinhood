@@ -28,6 +28,10 @@
 
 import UIKit
 
+protocol GraphViewDelegate: class {
+	func didMoveToPrice(_ graphView: GraphView, price: Double)
+}
+
 // Layout constants
 private extension CGFloat {
   static let graphLineWidth: CGFloat = 1.0
@@ -59,6 +63,9 @@ final class GraphView: UIView {
   private var width: CGFloat = 0
   private var step: CGFloat = 1
   private var xCoordinates: [CGFloat] = []
+	
+	weak var delegate: GraphViewDelegate?
+	private var feedbackGenerator = UISelectionFeedbackGenerator()
   
   init(data: RobinhoodChartData) {
     self.dataPoints = data
@@ -171,7 +178,7 @@ final class GraphView: UIView {
 		let dataPoint = dataPoints.data[xIndex]
 		
 		// Update line indicator
-		updateIndicator(with: x, date: dataPoint.date)
+		updateIndicator(with: x, date: dataPoint.date, price: dataPoint.price)
     default: break
     }
   }
@@ -185,7 +192,7 @@ final class GraphView: UIView {
 		let dataPoint = dataPoints.data[xIndex]
 		
 		// Update line indicator
-		updateIndicator(with: x, date: dataPoint.date)
+		updateIndicator(with: x, date: dataPoint.date, price: dataPoint.price)
 	}
 	
 	private func convertTouchLocationToPointX(touchLocation: CGPoint) -> CGFloat {
@@ -205,8 +212,15 @@ final class GraphView: UIView {
 		return x
 	}
 	
-	private func updateIndicator(with offset: CGFloat, date: Date) {
+	private func updateIndicator(with offset: CGFloat, date: Date, price: Double) {
 		timeStampLabel.text = dateFormatter.string(from: date).uppercased()
+		
+		if offset != lineViewLeading.constant {
+			feedbackGenerator.prepare()
+			feedbackGenerator.selectionChanged()
+			delegate?.didMoveToPrice(self, price: price)
+		}
+		
 		lineViewLeading.constant = offset
 		
 		let tsMin = timeStampLabel.frame.width / 2 + .timeStampPadding

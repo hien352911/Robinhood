@@ -123,3 +123,9 @@ extension ViewController: CardStackLayoutDelegate {
         cardCollectionView.reloadData()
     }
 }
+
+extension ViewController: GraphViewDelegate {
+	func didMoveToPrice(_ graphView: GraphView, price: Double) {
+		tickerControl.showNumber(price)
+	}
+}
