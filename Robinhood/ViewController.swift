@@ -46,6 +46,10 @@ class ViewController: UIViewController {
     lazy private var graphView: GraphView = {
         return GraphView(data: graphData)
     }()
+	
+	lazy private var tickerControl: TickerControl = {
+		return TickerControl(value: graphData.openingPrice)
+	}()
   
   override func viewDidLoad() {
     
@@ -56,9 +60,23 @@ class ViewController: UIViewController {
     if let layout = cardCollectionView.collectionViewLayout as? CardStackLayout {
         layout.delegate = self
     }
+	
+	addChild(tickerControl)
+	topView.addSubview(tickerControl.view)
+	tickerControl.view.translatesAutoresizingMaskIntoConstraints = false
+	
+	view.addConstraints([
+		NSLayoutConstraint(item: tickerControl.view, attribute: .top, relatedBy: .equal, toItem: topView, attribute: .top, multiplier: 1.0, constant: 0.0),
+		NSLayoutConstraint(item: tickerControl.view, attribute: .leading, relatedBy: .equal, toItem: topView, attribute: .leading, multiplier: 1.0, constant: 0.0),
+		NSLayoutConstraint(item: tickerControl.view, attribute: .trailing, relatedBy: .equal, toItem: topView, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+		NSLayoutConstraint(item: tickerControl.view, attribute: .height, relatedBy: .equal, toItem: topView, attribute: .height, multiplier: .tickerHeightMultiplier, constant: 0.0)
+		])
+	
+	tickerControl.didMove(toParent: self)
     
     graphView.backgroundColor = .white
     graphView.translatesAutoresizingMaskIntoConstraints = false
+	graphView.delegate = self
     topView.addSubview(graphView)
     
     view.addConstraints([
