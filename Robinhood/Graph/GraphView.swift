@@ -96,9 +96,9 @@ final class GraphView: UIView {
     for (index, dataPoint) in dataPoints.data.enumerated() {
         let midPoint = dataPoints.openingPrice
         let graphMiddle = height / 2
-        
+		
         let y: CGFloat = graphMiddle + CGFloat(midPoint - dataPoint.price) * .scale
-        
+		
         let newPoint = CGPoint(x: xCoordinates[index], y: y)
         graphPath.addLine(to: newPoint)
     }
@@ -111,6 +111,20 @@ final class GraphView: UIView {
   
   private func drawMiddleLine() {
     // draw middle line
+	
+	let middleLine = UIBezierPath()
+	
+	let startingPoint = CGPoint(x: 0, y: height / 2)
+	let endingPoint = CGPoint(x: width, y: height / 2)
+	
+	middleLine.move(to: startingPoint)
+	middleLine.addLine(to: endingPoint)
+	
+	middleLine.setLineDash([0, step], count: 2, phase: 0)
+	
+	middleLine.lineWidth = .baseLineWidth
+	middleLine.lineCapStyle = .round
+	middleLine.stroke()
   }
   
   private func configureLineIndicatorView() {
@@ -144,10 +158,41 @@ final class GraphView: UIView {
   
   @objc func userDidPan(_ pgr: UIPanGestureRecognizer) {
     let touchLocation = pgr.location(in: self)
-    
+	
     switch pgr.state {
+	case .changed, .began, .ended:
+		let x = convertTouchLocationToPointX(touchLocation: touchLocation)
+		
+		guard let xIndex = xCoordinates.index(of: x) else { return }
+		
+		let dataPoint = dataPoints.data[xIndex]
+		
+		// Update line indicator
+		updateIndicator(with: x, date: dataPoint.date)
     default: break
     }
   }
+	
+	private func convertTouchLocationToPointX(touchLocation: CGPoint) -> CGFloat {
+		let maxX: CGFloat = width
+		let minX: CGFloat = 0
+		
+		var x = min(max(touchLocation.x, maxX), minX)
+		
+		xCoordinates.forEach { xCoordinate in
+			let difference = abs(xCoordinate - touchLocation.x)
+			if difference <= step {
+				x = CGFloat(xCoordinate)
+				return
+			}
+		}
+		
+		return x
+	}
+	
+	private func updateIndicator(with offset: CGFloat, date: Date) {
+		timeStampLabel.text = dateFormatter.string(from: date).uppercased()
+		lineViewLeading.constant = offset
+	}
 }
 
