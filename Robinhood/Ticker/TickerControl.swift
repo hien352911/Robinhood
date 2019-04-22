@@ -103,7 +103,9 @@ final class TickerControl: UIViewController {
 			let characterIndex = cell.characters.index(of: "\(char)") else { return }
 		
 		let charIndexPath = IndexPath(row: characterIndex, section: 0)
-		cell.tableView.scrollToRow(at: charIndexPath, at: .middle, animated: true)
+		if !cell.isScrolling {
+			cell.tableView.scrollToRow(at: charIndexPath, at: .middle, animated: true)
+		}
 	}
   }
 }

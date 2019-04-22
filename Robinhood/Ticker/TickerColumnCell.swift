@@ -62,6 +62,7 @@ final class TickerColumnCell: UICollectionViewCell {
   }
   
   var size: Size = .large
+	var isScrolling = false
   
   override init(frame: CGRect)  {
     super.init(frame: frame)
@@ -115,4 +116,12 @@ extension TickerColumnCell: UITableViewDataSource {
 }
 
 // MARK: UITableViewDelegate
-extension TickerColumnCell: UITableViewDelegate { }
+extension TickerColumnCell: UITableViewDelegate {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		isScrolling = true
+	}
+	
+	func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+		isScrolling = false
+	}
+}
